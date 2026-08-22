@@ -1,6 +1,6 @@
 # CLAUDE.md — fathom 開発ルール
 
-プロダクト定義・設計判断・タスク内容は `HANDOFF.md` が唯一の正。ここには開発の進め方(ワークフロー)のルールのみを定義する。
+プロダクト定義・設計判断・仕様は **`docs/` 配下が唯一の正**([docs/README.md](./docs/README.md) が目次)。`HANDOFF.md` は2026-08-22時点の引き継ぎ用スナップショット(凍結済み・歴史的資料)であり、正ではない。ここには開発の進め方(ワークフロー)のルールのみを定義する。
 
 ## 開発フロー(Issue駆動)
 
@@ -23,7 +23,7 @@
   ```
 
 - 各worktreeでは最初に `pnpm install` を実行する(node_modulesはworktree間で共有されない)
-- マージ後の掃除: `git worktree remove ../<dir>` → `git branch -d <ブランチ名>`
+- マージ後の掃除: `git worktree remove ../<dir>` → `git branch -d <ブランチ名>`(リモートブランチはリポジトリ設定 `delete_branch_on_merge` により自動削除される)
 - 並列作業は「1 worktree = 1 Issue = 1 PR」を守る。worktree間で同じファイルを触るIssueは並列にしない
 
 ## PRルール
