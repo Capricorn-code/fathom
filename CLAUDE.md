@@ -79,7 +79,7 @@
 - タイトル: `<type>: <変更内容>`(日本語可)
 - 本文に必ず `Closes #<issue番号>` を入れ、マージでIssueが自動クローズされるようにする
 - 本文に**「受け入れ条件 ⇔ テスト」の対応**を書く(どのGiven/When/Thenがどのテストで担保されるか)
-- 完了条件: `pnpm build && pnpm test` が通ること
+- 完了条件: `pnpm lint && pnpm build && pnpm test` が通ること
 - マージ方式: **squash merge**(mainの履歴を1 Issue = 1コミットに保つ)
 
 ## GitHub側の構成
@@ -91,3 +91,5 @@
 
 - Node.js 22以上(開発機は24系)。`package.json` の `engines` は `">=22"` とする
 - pnpm workspace モノレポ。タスクランナー(Turborepo等)は導入しない
+- lint / format / import整理は **Biome 1本**(ルートの `biome.json`)。`pnpm lint`(チェックのみ)/ `pnpm format`(自動修正)。ESLint / Prettier / oxlint は導入しない
+- TS実装ルールの一部はlintで機械的に強制される(`noExplicitAny` / `noParameterAssign`)
