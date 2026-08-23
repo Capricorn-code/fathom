@@ -1,0 +1,29 @@
+# PRとmainへのpushで lint / build / test を検証する。
+# ランナーはubuntuのみ(無料枠の倍率1倍)。Nodeはenginesの下限である22で回し、
+# 「Node 22で動く」ことを毎PRで担保する(開発機は24系)。
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpmのバージョンはpackage.jsonのpackageManagerフィールドから解決される
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm test
