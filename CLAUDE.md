@@ -47,6 +47,33 @@
 - パーサー系のテスト入力は `packages/core/test/fixtures/` の**匿名化ログ断片**を使う(実ログをそのままコミットしない)
 - 実装だけ・テストだけのPRは出さない(骨組み・docs・設定変更は除く)
 
+## TypeScript実装ルール
+
+### YAGNI(今必要なものだけ作る)
+
+- 今のIssueに必要なコードだけを書く。「将来使うかもしれない」抽象化・オプション・設定項目は作らない
+- 思いついた将来案はコードにせず `BACKLOG.md` へ(docs/product.md の「広げるな」と同旨)
+
+### DRY(知識の重複を排除する)
+
+- 同じ知識・ルールが2箇所に書かれたら統合を検討する。ただし**早すぎる共通化はYAGNI違反**: 偶然似ているだけのコードは無理にまとめず、3回目の重複が出た時点で共通化する(Rule of Three)
+
+### TypeScriptベストプラクティス
+
+- `any` 禁止。型が不明なものは `unknown` で受けて絞り込む
+- 型アサーション(`as`)は外部境界での最小限に留める。**外部入力(JSONL等)は `as` で信じず、zodでパースして型を得る**
+- 公開APIの引数・戻り値には型を明示する
+- `enum` は使わず、ユニオン型(`"a" | "b"`)と `as const` を使う
+- 公開する型の配列・オブジェクトは `readonly` を基本にする
+
+### 破壊的操作を極力避ける
+
+参考: [配列の破壊的操作(サバイバルTypeScript)](https://typescriptbook.jp/reference/values-types-variables/array/array-operations)
+
+- `push` / `pop` / `shift` / `unshift` / `splice` / `sort` / `reverse` / `fill` 等の破壊的メソッドは避け、非破壊の代替を使う: スプレッド構文 / `map` / `filter` / `concat` / `slice` / `toSorted` / `toReversed` / `toSpliced` / `with`
+- 関数は引数を変更しない(引数に `readonly` を付けて構造で守る)
+- **例外:** 関数のローカルスコープに閉じた蓄積用の配列・Mapへの追記は許容する(大容量JSONLのストリーム集計等、性能上必要な場面)。ただしその可変値を関数外へ渡すときは `readonly` として公開する
+
 ## PRルール
 
 - タイトル: `<type>: <変更内容>`(日本語可)
