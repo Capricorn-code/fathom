@@ -8,6 +8,10 @@
 
 - パーサーのGo移植 — 機能Bリリース後に検討([ADR-008](./docs/adr/008-go-port-deferred.md))
 
+## 待ち(外部要因が解消したら着手)
+
+- TypeScriptを7系(ネイティブ版/tsgo)へ更新 — tsupのdts生成(rollup-plugin-dts)がTS7未対応でビルドが落ちるため5.9系に固定中(PR #6)。tsup側の対応後に上げる
+
 ## アイデア
 
 (まだなし)
