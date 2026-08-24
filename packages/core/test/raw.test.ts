@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { streamRawLines, type RawLine } from "../src/raw/index.js";
+import { type RawLine, streamRawLines } from "../src/raw/index.js";
 
 const fixture = (name: string): string =>
   fileURLToPath(new URL(`./fixtures/${name}`, import.meta.url));
