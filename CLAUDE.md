@@ -80,6 +80,7 @@
 - 本文に必ず `Closes #<issue番号>` を入れ、マージでIssueが自動クローズされるようにする
 - 本文に**「受け入れ条件 ⇔ テスト」の対応**を書く(どのGiven/When/Thenがどのテストで担保されるか)
 - 完了条件: `pnpm lint && pnpm build && pnpm test` が通ること
+- **CIが緑でないPRはマージしない。** GitHub Actions(`.github/workflows/ci.yml`)がPRごとにNode 22で lint / build / test を検証する(無料プラン+プライベートリポジトリのためGitHub側でのマージブロック強制はできない。運用で担保する)
 - マージ方式: **squash merge**(mainの履歴を1 Issue = 1コミットに保つ)
 
 ## GitHub側の構成
