@@ -1,0 +1,7 @@
+{"type":"user","uuid":"u-001","promptSource":"typed","message":{"role":"user","content":"最初の指示"}}
+{これは不正なJSON
+42
+"ただの文字列"
+{"uuid":"no-type-001","note":"typeキーがないレコード"}
+
+{"type":"assistant","uuid":"a-001","message":{"role":"assistant","content":[{"type":"text","text":"応答"}]}}
