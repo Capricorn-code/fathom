@@ -1,0 +1,3 @@
+{"type":"user","uuid":"u-001","parentUuid":null,"isSidechain":false,"isMeta":false,"promptSource":"typed","timestamp":"2026-01-01T00:00:00.000Z","message":{"role":"user","content":"サンプル関数にテストを追加して"},"unknownFutureKey":"preserve-me"}
+{"type":"assistant","uuid":"a-001","parentUuid":"u-001","isSidechain":false,"timestamp":"2026-01-01T00:00:10.000Z","message":{"role":"assistant","model":"claude-sonnet-5","content":[{"type":"text","text":"追加しました"}],"usage":{"input_tokens":100,"output_tokens":20}}}
+{"type":"attachment","uuid":"at-001","parentUuid":"a-001","timestamp":"2026-01-01T00:00:11.000Z"}
