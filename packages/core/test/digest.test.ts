@@ -64,9 +64,27 @@ describe("層3: SessionDigest生成", () => {
   describe("トークン集計とsynthetic除外", () => {
     it("syntheticの応答はトークン量に混ぜない", () => {
       const events: readonly NormalizedEvent[] = [
-        { kind: "turn_meta", model: "claude-sonnet-5", synthetic: false, inputTokens: 100, outputTokens: 20 },
-        { kind: "turn_meta", model: "<synthetic>", synthetic: true, inputTokens: 999, outputTokens: 999 },
-        { kind: "turn_meta", model: "claude-sonnet-5", synthetic: false, inputTokens: 50, outputTokens: 10 },
+        {
+          kind: "turn_meta",
+          model: "claude-sonnet-5",
+          synthetic: false,
+          inputTokens: 100,
+          outputTokens: 20,
+        },
+        {
+          kind: "turn_meta",
+          model: "<synthetic>",
+          synthetic: true,
+          inputTokens: 999,
+          outputTokens: 999,
+        },
+        {
+          kind: "turn_meta",
+          model: "claude-sonnet-5",
+          synthetic: false,
+          inputTokens: 50,
+          outputTokens: 10,
+        },
       ];
       const digest = buildSessionDigest(events, { sessionId: "s" });
       expect(digest.inputTokens).toBe(150);
