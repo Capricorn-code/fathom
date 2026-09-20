@@ -1,0 +1,3 @@
+{"type":"user","uuid":"u-001","promptSource":"typed","isMeta":false,"timestamp":"2026-01-01T00:00:00.000Z","message":{"role":"user","content":"設定読み込みを実装して"}}
+{"type":"assistant","uuid":"a-001","timestamp":"2026-01-01T00:00:10.000Z","message":{"role":"assistant","model":"claude-sonnet-5","content":[{"type":"text","text":"実装します"},{"type":"tool_use","id":"tool-1","name":"Edit","input":{"file_path":"src/config.ts"}}],"usage":{"input_tokens":200,"output_tokens":40}}}
+{"type":"user","uuid":"u-002","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tool-1","is_error":false}]}}
