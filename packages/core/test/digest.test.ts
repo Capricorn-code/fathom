@@ -70,6 +70,8 @@ describe("層3: SessionDigest生成", () => {
           synthetic: false,
           inputTokens: 100,
           outputTokens: 20,
+          cacheReadTokens: 0,
+          cacheCreationTokens: 0,
         },
         {
           kind: "turn_meta",
@@ -77,6 +79,8 @@ describe("層3: SessionDigest生成", () => {
           synthetic: true,
           inputTokens: 999,
           outputTokens: 999,
+          cacheReadTokens: 999,
+          cacheCreationTokens: 999,
         },
         {
           kind: "turn_meta",
@@ -84,6 +88,8 @@ describe("層3: SessionDigest生成", () => {
           synthetic: false,
           inputTokens: 50,
           outputTokens: 10,
+          cacheReadTokens: 0,
+          cacheCreationTokens: 0,
         },
       ];
       const digest = buildSessionDigest(events, { sessionId: "s" });
