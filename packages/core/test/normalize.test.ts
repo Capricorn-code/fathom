@@ -80,11 +80,19 @@ describe("層2: イベント正規化", () => {
         type: "assistant",
         message: {
           model: "claude-sonnet-5",
-          usage: { input_tokens: 10, cache_read_input_tokens: 100, cache_creation_input_tokens: 20 },
+          usage: {
+            input_tokens: 10,
+            cache_read_input_tokens: 100,
+            cache_creation_input_tokens: 20,
+          },
         },
       });
       const meta = events.find((event) => event.kind === "turn_meta");
-      expect(meta).toMatchObject({ inputTokens: 10, cacheReadTokens: 100, cacheCreationTokens: 20 });
+      expect(meta).toMatchObject({
+        inputTokens: 10,
+        cacheReadTokens: 100,
+        cacheCreationTokens: 20,
+      });
     });
 
     it("キャッシュ系フィールドを持たない古い形式のusageでも破綻しない", () => {

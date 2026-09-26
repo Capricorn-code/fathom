@@ -97,7 +97,11 @@ export function renderSummaryMarkdown(
     "",
     "## トークン量",
     "",
-    `- 入力: ${formatCount(digest.inputTokens)}`,
+    `- 入力: ${formatCount(digest.inputTokens)}${
+      digest.cacheReadTokens + digest.cacheCreationTokens > 0
+        ? `(うちキャッシュ読み込み ${formatCount(digest.cacheReadTokens)} / キャッシュ作成 ${formatCount(digest.cacheCreationTokens)})`
+        : ""
+    }`,
     `- 出力: ${formatCount(digest.outputTokens)}`,
     ...(digest.syntheticCount > 0
       ? ["", `(エラー時の合成応答 ${digest.syntheticCount}件は集計から除外)`]
