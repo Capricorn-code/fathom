@@ -12,6 +12,7 @@ import {
 } from "@fathom/core";
 import type { Command } from "commander";
 import { CONFIG_PATH_HINT, defaultConfigPath, loadConfig } from "../config.js";
+import { buildConversationTurns } from "../conversation.js";
 import { renderSummaryMarkdown } from "../render.js";
 import { defaultProjectsDir, runSetup } from "./setup.js";
 
@@ -85,7 +86,7 @@ export async function runSummary(jsonlPath: string, deps: SummaryDeps): Promise<
 
   const sessionId = basename(absolutePath, ".jsonl");
   const digest = buildSessionDigest(events, { sessionId });
-  deps.write(renderSummaryMarkdown(digest));
+  deps.write(renderSummaryMarkdown(digest, buildConversationTurns(events)));
   return 0;
 }
 
