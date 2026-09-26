@@ -50,6 +50,7 @@ describe("CLI: summaryコマンド", () => {
       const md = io.out.join("");
       expect(md).toContain("# セッションサマリ: sess-001");
       expect(md).toContain("設定読み込みを実装して");
+      expect(md).toContain("実装します");
     });
   });
 
