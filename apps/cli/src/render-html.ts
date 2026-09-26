@@ -23,6 +23,8 @@ body { font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif;
   max-width: 780px; margin: 0 auto; padding: 24px 16px; line-height: 1.7; }
 h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; margin-top: 2em;
   border-bottom: 1px solid color-mix(in srgb, currentColor 25%, transparent); padding-bottom: 4px; }
+h3 { font-size: 1rem; margin: 1.6em 0 0.2em; }
+.desc { font-size: 0.85rem; opacity: 0.7; margin: 0 0 6px; }
 .notice { font-size: 0.85rem; opacity: 0.75; border-left: 3px solid currentColor; padding-left: 10px; }
 dl.stats { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
 dl.stats dt { font-weight: 600; } dl.stats dd { margin: 0; }
@@ -36,17 +38,26 @@ details { margin-top: 8px; } summary { cursor: pointer; font-size: 0.85rem; opac
 code, .path { font-family: ui-monospace, monospace; font-size: 0.9em; }
 `;
 
-const renderStats = (digest: SessionDigest): string => {
+const renderPeriod = (digest: SessionDigest): string => {
   const period =
     digest.startedAt !== undefined && digest.endedAt !== undefined
       ? `${escapeHtml(digest.startedAt)} 〜 ${escapeHtml(digest.endedAt)}`
       : "不明";
+  return `<p class="period"><strong>期間:</strong> ${period}</p>`;
+};
+
+// 統計は脇役としてページ最下部に置く(#38のフィードバック)。
+// 各項目に「何の数字か」の説明を付ける(初見で意味が分かるように)。ファイル全量は折りたたみ
+const renderDetails = (digest: SessionDigest): string => {
   const files =
     digest.files.length > 0
-      ? digest.files
-          .map((file) => `<span class="path">${escapeHtml(file.path)}</span>(${file.edits}回)`)
-          .join("、")
-      : '<span class="none">(なし)</span>';
+      ? `<details><summary>触れられたファイル(${digest.files.length}件)</summary><ul>${digest.files
+          .map(
+            (file) =>
+              `<li><span class="path">${escapeHtml(file.path)}</span>(${file.edits}回)</li>`,
+          )
+          .join("")}</ul></details>`
+      : '<p class="none">(なし)</p>';
   const tools =
     digest.tools.length > 0
       ? digest.tools.map((tool) => `${escapeHtml(tool.name)}: ${tool.count}回`).join("、")
@@ -59,13 +70,18 @@ const renderStats = (digest: SessionDigest): string => {
     digest.errorCount > 0
       ? `${digest.errorCount}件発生、うち${digest.resolvedCount}件はその後の操作の成功が記録`
       : "記録なし";
-  return `<dl class="stats">
-<dt>期間</dt><dd>${period}</dd>
-<dt>触れられたファイル</dt><dd>${files}</dd>
-<dt>使用されたツール</dt><dd>${tools}</dd>
-<dt>エラー</dt><dd>${errors}</dd>
-<dt>トークン量</dt><dd>入力 ${formatCount(digest.inputTokens)}${cacheNote} / 出力 ${formatCount(digest.outputTokens)}</dd>
-</dl>`;
+  return `<h3>触れられたファイル</h3>
+<p class="desc">このセッションで編集・作成が記録されたファイルと、その回数です。</p>
+${files}
+<h3>使用されたツール</h3>
+<p class="desc">AIが作業に使った道具(ファイル編集・コマンド実行・検索など)の内訳です。</p>
+<p>${tools}</p>
+<h3>エラー</h3>
+<p class="desc">ツールの実行が失敗した回数です。「その後の操作の成功」は同じツールが後で成功した記録を指します。</p>
+<p>${errors}</p>
+<h3>トークン量</h3>
+<p class="desc">AIとのやり取りで処理されたテキスト量です。入力は毎ターン会話履歴を再送する仕組みのため<strong>延べ量(重複を含む)</strong>で、会話の中身の量ではありません。</p>
+<p>入力 ${formatCount(digest.inputTokens)}${cacheNote} / 出力 ${formatCount(digest.outputTokens)}</p>`;
 };
 
 const renderTurn = (turn: ConversationTurn): string => {
@@ -104,10 +120,11 @@ export function renderSummaryHtml(
 <body>
 <h1>セッションサマリ: ${escapeHtml(digest.sessionId)}</h1>
 <p class="notice">このサマリはセッションログの機械的な集計です。記録された操作の主体(あなた/AI)を断定しません。</p>
-<h2>概要</h2>
-${renderStats(digest)}
+${renderPeriod(digest)}
 <h2>あなたの指示とAIの応答</h2>
 ${turnItems}
+<h2>詳細</h2>
+${renderDetails(digest)}
 </body>
 </html>
 `;
