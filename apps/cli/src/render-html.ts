@@ -36,17 +36,25 @@ details { margin-top: 8px; } summary { cursor: pointer; font-size: 0.85rem; opac
 code, .path { font-family: ui-monospace, monospace; font-size: 0.9em; }
 `;
 
-const renderStats = (digest: SessionDigest): string => {
+const renderPeriod = (digest: SessionDigest): string => {
   const period =
     digest.startedAt !== undefined && digest.endedAt !== undefined
       ? `${escapeHtml(digest.startedAt)} 〜 ${escapeHtml(digest.endedAt)}`
       : "不明";
+  return `<p class="period"><strong>期間:</strong> ${period}</p>`;
+};
+
+// 統計は脇役としてページ最下部に置く(#38のフィードバック)。ファイル全量は折りたたみ
+const renderDetails = (digest: SessionDigest): string => {
   const files =
     digest.files.length > 0
-      ? digest.files
-          .map((file) => `<span class="path">${escapeHtml(file.path)}</span>(${file.edits}回)`)
-          .join("、")
-      : '<span class="none">(なし)</span>';
+      ? `<details><summary>触れられたファイル(${digest.files.length}件)</summary><ul>${digest.files
+          .map(
+            (file) =>
+              `<li><span class="path">${escapeHtml(file.path)}</span>(${file.edits}回)</li>`,
+          )
+          .join("")}</ul></details>`
+      : '<p class="none">触れられたファイル: (なし)</p>';
   const tools =
     digest.tools.length > 0
       ? digest.tools.map((tool) => `${escapeHtml(tool.name)}: ${tool.count}回`).join("、")
@@ -59,9 +67,8 @@ const renderStats = (digest: SessionDigest): string => {
     digest.errorCount > 0
       ? `${digest.errorCount}件発生、うち${digest.resolvedCount}件はその後の操作の成功が記録`
       : "記録なし";
-  return `<dl class="stats">
-<dt>期間</dt><dd>${period}</dd>
-<dt>触れられたファイル</dt><dd>${files}</dd>
+  return `${files}
+<dl class="stats">
 <dt>使用されたツール</dt><dd>${tools}</dd>
 <dt>エラー</dt><dd>${errors}</dd>
 <dt>トークン量</dt><dd>入力 ${formatCount(digest.inputTokens)}${cacheNote} / 出力 ${formatCount(digest.outputTokens)}</dd>
@@ -104,10 +111,11 @@ export function renderSummaryHtml(
 <body>
 <h1>セッションサマリ: ${escapeHtml(digest.sessionId)}</h1>
 <p class="notice">このサマリはセッションログの機械的な集計です。記録された操作の主体(あなた/AI)を断定しません。</p>
-<h2>概要</h2>
-${renderStats(digest)}
+${renderPeriod(digest)}
 <h2>あなたの指示とAIの応答</h2>
 ${turnItems}
+<h2>詳細</h2>
+${renderDetails(digest)}
 </body>
 </html>
 `;
