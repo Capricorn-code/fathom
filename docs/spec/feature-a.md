@@ -11,9 +11,11 @@ AIとの開発履歴から「何をやったか」を言語化する機能。無
 ### CLI
 
 ```
-fathom summary <jsonlパス>
+fathom summary <jsonlパス>          # サマリMDを標準出力
+fathom summary <jsonlパス> --html   # 自己完結HTMLをカレントに出力(暫定の画面)
 ```
 
+- `--html` はスタイル内蔵・外部依存なしの単一HTMLを生成する。本格的な画面はM3以降のWebサービス化で提供する(暫定措置。#36)
 - [ADR-006](../adr/006-optin-allowlist.md) 準拠: 許可リスト(`~/.config/fathom/config.json`)にないプロジェクトのログは拒否する
 - **初回対話セットアップ:** 設定なしで実行された場合、`~/.claude/projects/` の一覧を表示し「解析対象を選択(業務プロジェクトは選ばないでください)」と促して許可リストを生成する
 
