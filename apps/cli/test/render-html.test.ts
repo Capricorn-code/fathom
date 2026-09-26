@@ -69,3 +69,39 @@ describe("サマリのHTML出力", () => {
     });
   });
 });
+
+describe("レイアウト(#41)", () => {
+  it("期間は冒頭、統計(ファイル・ツール・エラー・トークン)は会話の流れより後に配置される", () => {
+    const html = renderSummaryHtml(digest, turns);
+    const period = html.indexOf("期間");
+    const conversation = html.indexOf("あなたの指示とAIの応答");
+    const files = html.indexOf("触れられたファイル");
+    const tokens = html.indexOf("トークン量");
+    expect(period).toBeGreaterThan(-1);
+    expect(period).toBeLessThan(conversation);
+    expect(conversation).toBeLessThan(files);
+    expect(conversation).toBeLessThan(tokens);
+  });
+
+  it("ファイル一覧は件数つきの折りたたみで、既定では閉じている", () => {
+    const html = renderSummaryHtml(digest, turns);
+    expect(html).toContain("<summary>触れられたファイル(1件)</summary>");
+    expect(html).not.toContain("<details open");
+  });
+});
+
+describe("統計の説明文(#41追記)", () => {
+  it("詳細の各項目に「何の数字か」の説明が付いている", () => {
+    const html = renderSummaryHtml(digest, turns);
+    expect(html).toContain("編集・作成が記録されたファイル");
+    expect(html).toContain("AIが作業に使った道具");
+    expect(html).toContain("ツールの実行が失敗した回数");
+    expect(html).toContain("処理されたテキスト量");
+  });
+
+  it("入力トークンには延べ量(履歴再送を含む)である注記が付いている", () => {
+    const html = renderSummaryHtml(digest, turns);
+    expect(html).toContain("延べ");
+    expect(html).toContain("会話履歴");
+  });
+});
