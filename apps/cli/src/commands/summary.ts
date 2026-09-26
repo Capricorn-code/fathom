@@ -2,7 +2,8 @@
 // JSONL 1ファイル → 層1(raw)→層2(normalize)→層3(digest)→ MDレンダリングの結線。
 // ADR-006: 許可リスト(opt-in)にないプロジェクトはファイルを読む前に拒否する。
 
-import { basename, dirname, resolve } from "node:path";
+import { writeFile } from "node:fs/promises";
+import { basename, dirname, join, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import {
   buildSessionDigest,
@@ -14,6 +15,7 @@ import type { Command } from "commander";
 import { CONFIG_PATH_HINT, defaultConfigPath, loadConfig } from "../config.js";
 import { buildConversationTurns } from "../conversation.js";
 import { renderSummaryMarkdown } from "../render.js";
+import { renderSummaryHtml } from "../render-html.js";
 import { defaultProjectsDir, runSetup } from "./setup.js";
 
 export interface SummaryDeps {
@@ -23,6 +25,8 @@ export interface SummaryDeps {
   /** 対話入力。省略時は非対話モード(設定なしなら案内のみで終了)。 */
   readonly ask?: (question: string) => Promise<string>;
   readonly projectsDir?: string;
+  /** 指定時はMDの代わりに自己完結HTMLをこのディレクトリへ出力する(Issue #36) */
+  readonly htmlOutDir?: string;
 }
 
 const isFileMissing = (error: unknown): boolean =>
@@ -86,7 +90,15 @@ export async function runSummary(jsonlPath: string, deps: SummaryDeps): Promise<
 
   const sessionId = basename(absolutePath, ".jsonl");
   const digest = buildSessionDigest(events, { sessionId });
-  deps.write(renderSummaryMarkdown(digest, buildConversationTurns(events)));
+  const turns = buildConversationTurns(events);
+  if (deps.htmlOutDir !== undefined) {
+    const htmlPath = join(deps.htmlOutDir, `fathom-summary-${sessionId}.html`);
+    await writeFile(htmlPath, renderSummaryHtml(digest, turns), "utf8");
+    deps.write(`HTMLサマリを出力しました: ${htmlPath}`);
+    deps.write("ブラウザで開いて確認してください。");
+    return 0;
+  }
+  deps.write(renderSummaryMarkdown(digest, turns));
   return 0;
 }
 
@@ -94,8 +106,9 @@ export function registerSummaryCommand(program: Command): void {
   program
     .command("summary")
     .argument("<jsonlPath>", "Claude CodeセッションログのJSONLファイル")
-    .description("セッションログからサマリMDを生成する")
-    .action(async (jsonlPath: string) => {
+    .option("--html", "サマリを自己完結HTMLファイルとして出力する(暫定の画面)")
+    .description("セッションログからサマリを生成する(既定: MD、--htmlでHTML)")
+    .action(async (jsonlPath: string, options: { html?: boolean }) => {
       // 対話セットアップは端末から実行されたときだけ有効(パイプ・CI等では非対話)
       const interactive = process.stdin.isTTY === true && process.stdout.isTTY === true;
       const rl = interactive
@@ -107,6 +120,7 @@ export function registerSummaryCommand(program: Command): void {
           write: (text) => process.stdout.write(`${text}\n`),
           writeError: (text) => process.stderr.write(`${text}\n`),
           ask: rl === undefined ? undefined : (question) => rl.question(question),
+          htmlOutDir: options.html === true ? process.cwd() : undefined,
         });
       } finally {
         rl?.close();
