@@ -10,7 +10,14 @@ const events: readonly NormalizedEvent[] = [
   { kind: "tool_call", toolName: "Edit", filePath: "a.ts" },
   { kind: "assistant_text", text: "続きの応答" },
   { kind: "user_prompt", text: "次の指示" },
-  { kind: "turn_meta", synthetic: false, inputTokens: 1, outputTokens: 1 },
+  {
+    kind: "turn_meta",
+    synthetic: false,
+    inputTokens: 1,
+    outputTokens: 1,
+    cacheReadTokens: 0,
+    cacheCreationTokens: 0,
+  },
 ];
 
 const digest: SessionDigest = {
@@ -25,6 +32,8 @@ const digest: SessionDigest = {
   syntheticCount: 0,
   inputTokens: 0,
   outputTokens: 0,
+  cacheReadTokens: 0,
+  cacheCreationTokens: 0,
 };
 
 describe("会話の流れの構築", () => {

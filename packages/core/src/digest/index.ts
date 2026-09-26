@@ -14,8 +14,11 @@ export interface SessionDigest {
   readonly errorCount: number;
   readonly resolvedCount: number;
   readonly syntheticCount: number;
+  /** キャッシュ読み込み・作成を含む入力トークンの合計 */
   readonly inputTokens: number;
   readonly outputTokens: number;
+  readonly cacheReadTokens: number;
+  readonly cacheCreationTokens: number;
 }
 
 export interface SessionMeta {
@@ -46,6 +49,8 @@ export function buildSessionDigest(
   let syntheticCount = 0;
   let inputTokens = 0;
   let outputTokens = 0;
+  let cacheReadTokens = 0;
+  let cacheCreationTokens = 0;
 
   for (const event of events) {
     if (event.timestamp !== undefined) {
@@ -75,8 +80,10 @@ export function buildSessionDigest(
         if (event.synthetic) {
           syntheticCount += 1;
         } else {
-          inputTokens += event.inputTokens;
+          inputTokens += event.inputTokens + event.cacheReadTokens + event.cacheCreationTokens;
           outputTokens += event.outputTokens;
+          cacheReadTokens += event.cacheReadTokens;
+          cacheCreationTokens += event.cacheCreationTokens;
         }
         break;
       default:
@@ -102,5 +109,7 @@ export function buildSessionDigest(
     syntheticCount,
     inputTokens,
     outputTokens,
+    cacheReadTokens,
+    cacheCreationTokens,
   };
 }
