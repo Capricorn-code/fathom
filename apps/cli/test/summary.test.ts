@@ -91,3 +91,21 @@ describe("CLI: summaryコマンド", () => {
     });
   });
 });
+
+describe("HTML出力(--html)", () => {
+  it("htmlOutDir指定時は自己完結HTMLファイルが生成され、出力先パスが表示される", async () => {
+    const { mkdtemp: mkTemp } = await import("node:fs/promises");
+    const { readFile: read } = await import("node:fs/promises");
+    const tempDir = await mkTemp(join(tmpdir(), "fathom-html-"));
+    const configPath = await writeConfig(tempDir, ["-Users-anon-sample-project"]);
+    const io = capture();
+    const code = await runSummary(fixtureJsonl, { configPath, htmlOutDir: tempDir, ...io });
+    expect(code).toBe(0);
+    const htmlPath = join(tempDir, "fathom-summary-sess-001.html");
+    const html = await read(htmlPath, "utf8");
+    expect(html).toContain("<!doctype html>");
+    expect(html).toContain("設定読み込みを実装して");
+    expect(io.out.join("\n")).toContain(htmlPath);
+    expect(io.out.join("\n")).not.toContain("# セッションサマリ");
+  });
+});
