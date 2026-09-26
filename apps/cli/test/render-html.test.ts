@@ -89,3 +89,19 @@ describe("レイアウト(#41)", () => {
     expect(html).not.toContain("<details open");
   });
 });
+
+describe("統計の説明文(#41追記)", () => {
+  it("詳細の各項目に「何の数字か」の説明が付いている", () => {
+    const html = renderSummaryHtml(digest, turns);
+    expect(html).toContain("編集・作成が記録されたファイル");
+    expect(html).toContain("AIが作業に使った道具");
+    expect(html).toContain("ツールの実行が失敗した回数");
+    expect(html).toContain("処理されたテキスト量");
+  });
+
+  it("入力トークンには延べ量(履歴再送を含む)である注記が付いている", () => {
+    const html = renderSummaryHtml(digest, turns);
+    expect(html).toContain("延べ");
+    expect(html).toContain("会話履歴");
+  });
+});
