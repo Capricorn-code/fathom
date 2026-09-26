@@ -69,3 +69,23 @@ describe("サマリのHTML出力", () => {
     });
   });
 });
+
+describe("レイアウト(#41)", () => {
+  it("期間は冒頭、統計(ファイル・ツール・エラー・トークン)は会話の流れより後に配置される", () => {
+    const html = renderSummaryHtml(digest, turns);
+    const period = html.indexOf("期間");
+    const conversation = html.indexOf("あなたの指示とAIの応答");
+    const files = html.indexOf("触れられたファイル");
+    const tokens = html.indexOf("トークン量");
+    expect(period).toBeGreaterThan(-1);
+    expect(period).toBeLessThan(conversation);
+    expect(conversation).toBeLessThan(files);
+    expect(conversation).toBeLessThan(tokens);
+  });
+
+  it("ファイル一覧は件数つきの折りたたみで、既定では閉じている", () => {
+    const html = renderSummaryHtml(digest, turns);
+    expect(html).toContain("<summary>触れられたファイル(1件)</summary>");
+    expect(html).not.toContain("<details open");
+  });
+});
