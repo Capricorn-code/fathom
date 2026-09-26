@@ -73,4 +73,35 @@ describe("層2: イベント正規化", () => {
       expect(normalizeRecord({ type: "attachment" })).toEqual([]);
     });
   });
+
+  describe("キャッシュ系トークン(#31)", () => {
+    it("usageのキャッシュ読み込み・作成トークンがturn_metaに含まれる", () => {
+      const events = normalizeRecord({
+        type: "assistant",
+        message: {
+          model: "claude-sonnet-5",
+          usage: {
+            input_tokens: 10,
+            cache_read_input_tokens: 100,
+            cache_creation_input_tokens: 20,
+          },
+        },
+      });
+      const meta = events.find((event) => event.kind === "turn_meta");
+      expect(meta).toMatchObject({
+        inputTokens: 10,
+        cacheReadTokens: 100,
+        cacheCreationTokens: 20,
+      });
+    });
+
+    it("キャッシュ系フィールドを持たない古い形式のusageでも破綻しない", () => {
+      const events = normalizeRecord({
+        type: "assistant",
+        message: { model: "claude-sonnet-5", usage: { input_tokens: 10, output_tokens: 5 } },
+      });
+      const meta = events.find((event) => event.kind === "turn_meta");
+      expect(meta).toMatchObject({ inputTokens: 10, cacheReadTokens: 0, cacheCreationTokens: 0 });
+    });
+  });
 });

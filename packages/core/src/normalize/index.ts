@@ -23,6 +23,8 @@ export type NormalizedEvent =
       readonly synthetic: boolean;
       readonly inputTokens: number;
       readonly outputTokens: number;
+      readonly cacheReadTokens: number;
+      readonly cacheCreationTokens: number;
       readonly timestamp?: string;
     };
 
@@ -46,6 +48,8 @@ const messageSchema = z.looseObject({
     .looseObject({
       input_tokens: z.number().optional(),
       output_tokens: z.number().optional(),
+      cache_read_input_tokens: z.number().optional(),
+      cache_creation_input_tokens: z.number().optional(),
     })
     .optional(),
 });
@@ -121,6 +125,8 @@ const normalizeAssistant = (record: ParsedRecord): readonly NormalizedEvent[] =>
       synthetic: model === SYNTHETIC_MODEL,
       inputTokens: usage.input_tokens ?? 0,
       outputTokens: usage.output_tokens ?? 0,
+      cacheReadTokens: usage.cache_read_input_tokens ?? 0,
+      cacheCreationTokens: usage.cache_creation_input_tokens ?? 0,
       timestamp,
     });
   }

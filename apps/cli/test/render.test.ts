@@ -20,6 +20,8 @@ const digest: SessionDigest = {
   syntheticCount: 1,
   inputTokens: 1500,
   outputTokens: 300,
+  cacheReadTokens: 0,
+  cacheCreationTokens: 0,
 };
 
 const emptyDigest: SessionDigest = {
@@ -34,6 +36,8 @@ const emptyDigest: SessionDigest = {
   syntheticCount: 0,
   inputTokens: 0,
   outputTokens: 0,
+  cacheReadTokens: 0,
+  cacheCreationTokens: 0,
 };
 
 describe("サマリMDレンダリング", () => {
