@@ -107,6 +107,8 @@ describe("層3: SessionDigest生成", () => {
           "errorCount",
           "resolvedCount",
           "syntheticCount",
+          "cacheReadTokens",
+          "cacheCreationTokens",
           "inputTokens",
           "outputTokens",
         ].toSorted(),
@@ -126,6 +128,35 @@ describe("層3: SessionDigest生成", () => {
       expect(digest.files).toEqual([]);
       expect(digest.errorCount).toBe(0);
       expect(digest.startedAt).toBeUndefined();
+    });
+  });
+
+  describe("キャッシュ系トークンの集計(#31)", () => {
+    it("入力トークンはキャッシュ読み込み・作成を含む合計になり、内訳も保持される", () => {
+      const events: readonly NormalizedEvent[] = [
+        {
+          kind: "turn_meta",
+          model: "claude-sonnet-5",
+          synthetic: false,
+          inputTokens: 10,
+          outputTokens: 5,
+          cacheReadTokens: 100,
+          cacheCreationTokens: 20,
+        },
+        {
+          kind: "turn_meta",
+          model: "claude-sonnet-5",
+          synthetic: false,
+          inputTokens: 5,
+          outputTokens: 5,
+          cacheReadTokens: 50,
+          cacheCreationTokens: 0,
+        },
+      ];
+      const digest = buildSessionDigest(events, { sessionId: "s" });
+      expect(digest.inputTokens).toBe(185);
+      expect(digest.cacheReadTokens).toBe(150);
+      expect(digest.cacheCreationTokens).toBe(20);
     });
   });
 });
