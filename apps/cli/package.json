@@ -31,7 +31,8 @@
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "prepublishOnly": "pnpm build && pnpm test"
   },
   "dependencies": {
     "commander": "^15.0.0",
