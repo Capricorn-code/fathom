@@ -19,14 +19,22 @@ npm install -g @haruto-y/fathom
 ## 使い方
 
 ```sh
-# サマリをMarkdownで標準出力
-fathom summary <セッションログのJSONLパス>
-
-# ブラウザで読みやすい自己完結HTMLを生成
-fathom summary <セッションログのJSONLパス> --html
+fathom summary          # セッション一覧から選んでMarkdownを出力
+fathom summary --html   # 同じく選んで、ブラウザで読める自己完結HTMLを生成
 ```
 
-セッションログは Claude Code が `~/.claude/projects/<プロジェクト>/<セッションID>.jsonl` に自動保存しているものです。
+実行すると、許可したプロジェクトのセッションが新しい順に並ぶので、番号を選ぶだけです。
+
+```
+サマリを見るセッションを選んでください(新しい順):
+
+1. /Users/you/hobby/app(2026-10-03 12:30)
+2. /Users/you/oss/tool(2026-10-01 09:12)
+
+番号:
+```
+
+ログのパスが分かっている場合は `fathom summary <JSONLパス>` の直接指定もできます(Claude Codeのログは `~/.claude/projects/` 配下にあります)。
 
 ### 初回セットアップ
 
