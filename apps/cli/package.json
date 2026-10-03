@@ -1,7 +1,20 @@
 {
-  "name": "@fathom/cli",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@haruto-y/fathom",
+  "version": "0.1.0",
+  "description": "Claude Codeのセッションログから「何をやったか」を言語化するローカルCLI。指示とAIの応答を5分で読めるサマリ(MD/HTML)にする",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "cli",
+    "summary",
+    "session-log",
+    "ai"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Capricorn-code/fathom.git"
+  },
   "type": "module",
   "bin": {
     "fathom": "./dist/index.js"
@@ -9,14 +22,22 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsup src/index.ts --format esm --clean",
+    "build": "tsup",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@fathom/core": "workspace:*",
     "commander": "^15.0.0",
     "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@fathom/core": "workspace:*"
   }
 }
