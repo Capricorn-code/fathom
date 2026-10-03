@@ -11,10 +11,6 @@
     "ai"
   ],
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Capricorn-code/fathom.git"
-  },
   "type": "module",
   "bin": {
     "fathom": "./dist/index.js"
