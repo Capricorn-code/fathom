@@ -20,7 +20,8 @@
     "fathom": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "engines": {
     "node": ">=22"
