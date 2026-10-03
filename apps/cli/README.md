@@ -75,6 +75,6 @@ fathomの初回セットアップです。解析を許可するプロジェク�
 
 MIT
 
-## 開発
+## フィードバック
 
-ソースコード・設計ドキュメント・Issueは [GitHub](https://github.com/Capricorn-code/fathom) へ。
+感想・不具合報告は [Zennの紹介記事](https://zenn.dev/haruto_y) のコメントへお寄せください。
