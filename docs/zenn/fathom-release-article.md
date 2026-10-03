@@ -34,9 +34,11 @@ Claude Codeは、すべてのセッションを `~/.claude/projects/` にログ(
 ```sh
 npm install -g @haruto-y/fathom   # Node.js 22+
 
-fathom summary <ログのJSONLパス>         # Markdownで出力
-fathom summary <ログのJSONLパス> --html  # ブラウザで読めるHTMLを生成
+fathom summary          # セッション一覧から選んでMarkdownで出力
+fathom summary --html   # 同じく選んで、ブラウザで読めるHTMLを生成
 ```
+
+ログのパスを知っている必要はありません。実行すると、許可したプロジェクトのセッションが新しい順に並ぶので、番号を選ぶだけです。
 
 <!-- ここにスクリーンショット①: --htmlのサマリ画面 -->
 

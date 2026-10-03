@@ -11,8 +11,8 @@ Claude Codeが `~/.claude/projects/` に自動保存しているセッション�
 ```sh
 npm install -g @haruto-y/fathom     # Node.js 22+
 
-fathom summary <ログのJSONLパス>         # Markdownを標準出力
-fathom summary <ログのJSONLパス> --html  # 自己完結HTMLを生成
+fathom summary          # セッション一覧から選んでMarkdownを出力
+fathom summary --html   # 同じく選んで自己完結HTMLを生成
 ```
 
 初回実行時は、解析を許可するプロジェクトを選ぶ対話セットアップが起動します(**デフォルト全拒否のopt-in方式**。選んだプロジェクト以外のログは一切読みません)。
