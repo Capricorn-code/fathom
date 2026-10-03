@@ -11,8 +11,9 @@ AIとの開発履歴から「何をやったか」を言語化する機能。無
 ### CLI
 
 ```
-fathom summary <jsonlパス>          # サマリMDを標準出力
-fathom summary <jsonlパス> --html   # 自己完結HTMLをカレントに出力(暫定の画面)
+fathom summary                      # 許可プロジェクトのセッション一覧から選択して実行(基本の使い方)
+fathom summary <jsonlパス>          # パス直接指定(上級者向け)
+fathom summary --html               # 一覧選択→自己完結HTMLをカレントに出力(暫定の画面)
 ```
 
 - `--html` はスタイル内蔵・外部依存なしの単一HTMLを生成する。本格的な画面はM3以降のWebサービス化で提供する(暫定措置。#36)

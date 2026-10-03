@@ -1,5 +1,7 @@
-// fathom summary <jsonlパス>
+// fathom summary [jsonlパス]
 // JSONL 1ファイル → 層1(raw)→層2(normalize)→層3(digest)→ MDレンダリングの結線。
+// 引数なしの場合は許可プロジェクトのセッション一覧から選択する(Issue #53。
+// 利用者は ~/.claude/projects/ のパスを知らないため、こちらが基本の使い方)。
 // ADR-006: 許可リスト(opt-in)にないプロジェクトはファイルを読む前に拒否する。
 
 import { writeFile } from "node:fs/promises";
@@ -16,7 +18,8 @@ import { CONFIG_PATH_HINT, defaultConfigPath, loadConfig } from "../config.js";
 import { buildConversationTurns } from "../conversation.js";
 import { renderSummaryMarkdown } from "../render.js";
 import { renderSummaryHtml } from "../render-html.js";
-import { defaultProjectsDir, runSetup } from "./setup.js";
+import { listSessions } from "../sessions.js";
+import { defaultProjectsDir, parseSelection, runSetup } from "./setup.js";
 
 export interface SummaryDeps {
   readonly configPath: string;
@@ -32,10 +35,48 @@ export interface SummaryDeps {
 const isFileMissing = (error: unknown): boolean =>
   error instanceof Error && "code" in error && error.code === "ENOENT";
 
-export async function runSummary(jsonlPath: string, deps: SummaryDeps): Promise<number> {
-  const absolutePath = resolve(jsonlPath);
-  const projectDir = basename(dirname(absolutePath));
+const pickSession = async (
+  config: { readonly allowedProjects: readonly string[] },
+  deps: SummaryDeps,
+): Promise<string | undefined> => {
+  const sessions = await listSessions(deps.projectsDir ?? defaultProjectsDir(), [
+    ...config.allowedProjects,
+  ]);
+  if (sessions.length === 0) {
+    deps.writeError(
+      [
+        "許可したプロジェクトにセッションログが見つかりません。",
+        "Claude Codeで開発した後にもう一度実行するか、許可リストを見直してください。",
+      ].join("\n"),
+    );
+    return undefined;
+  }
+  if (deps.ask === undefined) {
+    deps.writeError("非対話環境ではJSONLパスの指定が必要です: fathom summary <jsonlパス>");
+    return undefined;
+  }
+  deps.write("サマリを見るセッションを選んでください(新しい順):");
+  deps.write("");
+  sessions.slice(0, 10).forEach((session, index) => {
+    deps.write(
+      `${index + 1}. ${session.label}(${session.mtime.toISOString().slice(0, 16).replace("T", " ")})`,
+    );
+  });
+  deps.write("");
+  const answer = await deps.ask("番号: ");
+  const selected = parseSelection(answer, Math.min(sessions.length, 10));
+  const index = selected?.[0];
+  if (index === undefined) {
+    deps.writeError("選択が無効です。");
+    return undefined;
+  }
+  return sessions[index]?.path;
+};
 
+export async function runSummary(
+  jsonlPath: string | undefined,
+  deps: SummaryDeps,
+): Promise<number> {
   let config = await loadConfig(deps.configPath);
   if (config === undefined && deps.ask !== undefined) {
     // 設定なし → 初回対話セットアップを起動し、生成された許可リストで続行する
@@ -61,6 +102,13 @@ export async function runSummary(jsonlPath: string, deps: SummaryDeps): Promise<
     );
     return 1;
   }
+
+  const resolvedInput = jsonlPath ?? (await pickSession(config, deps));
+  if (resolvedInput === undefined) {
+    return 1;
+  }
+  const absolutePath = resolve(resolvedInput);
+  const projectDir = basename(dirname(absolutePath));
 
   if (!config.allowedProjects.includes(projectDir)) {
     deps.writeError(
@@ -105,10 +153,10 @@ export async function runSummary(jsonlPath: string, deps: SummaryDeps): Promise<
 export function registerSummaryCommand(program: Command): void {
   program
     .command("summary")
-    .argument("<jsonlPath>", "Claude CodeセッションログのJSONLファイル")
+    .argument("[jsonlPath]", "セッションログのJSONLパス(省略時は一覧から選択)")
     .option("--html", "サマリを自己完結HTMLファイルとして出力する(暫定の画面)")
     .description("セッションログからサマリを生成する(既定: MD、--htmlでHTML)")
-    .action(async (jsonlPath: string, options: { html?: boolean }) => {
+    .action(async (jsonlPath: string | undefined, options: { html?: boolean }) => {
       // 対話セットアップは端末から実行されたときだけ有効(パイプ・CI等では非対話)
       const interactive = process.stdin.isTTY === true && process.stdout.isTTY === true;
       const rl = interactive

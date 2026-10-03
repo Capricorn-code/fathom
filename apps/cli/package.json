@@ -1,6 +1,6 @@
 {
   "name": "@haruto-y/fathom",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Claude Codeのセッションログから「何をやったか」を言語化するローカルCLI。指示とAIの応答を5分で読めるサマリ(MD/HTML)にする",
   "keywords": [
     "claude-code",
