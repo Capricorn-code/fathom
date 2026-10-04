@@ -85,4 +85,4 @@ MIT
 
 ## フィードバック
 
-感想・不具合報告は [Zennの紹介記事](https://zenn.dev/haruto_y) のコメントへお寄せください。
+不具合報告・要望は [GitHubのIssue](https://github.com/Capricorn-code/fathom/issues)、感想はZennの紹介記事のコメントへどうぞ。ソースコードと設計ドキュメントも[リポジトリ](https://github.com/Capricorn-code/fathom)で公開しています(完全ローカル処理であることはコードで確認できます)。
