@@ -96,6 +96,7 @@ AIとの開発履歴を「自分の実績」に変換するツールは、簡単
 ## リンク
 
 - npm: https://www.npmjs.com/package/@haruto-y/fathom
+- GitHub: https://github.com/Capricorn-code/fathom(完全ローカル処理であることはコードで確認できます)
 <!-- GitHubリポジトリを公開する場合はここにリンク追加 -->
 
 試してみて「ここは説明できないな…」という箇所が見つかったら、それがfathomの狙い通りの瞬間です。フィードバックお待ちしています。
